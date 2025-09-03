@@ -1,0 +1,10 @@
+name: appshiny-1
+title:
+username: arunansh
+account: arunansh
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 15335459
+bundleId: 10855852
+url: https://arunansh.shinyapps.io/appshiny-1/
+version: 1

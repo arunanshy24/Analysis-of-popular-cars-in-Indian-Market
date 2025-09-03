@@ -1,0 +1,313 @@
+---
+title: "Analysis of popular cars in Indian Market"
+author: "Group 20: Aviral, Pulak, Arunansh, Rutvik"
+format: 
+  pdf: default
+---
+
+```{=tex}
+\section{1. Introduction}
+\subsection{1.1 Introduction to Cars}
+```
+The automotive industry is undergoing significant changes with the rise of electric vehicles (EVs), autonomous driving technologies, and increasing connectivity within vehicles. In India, the car market is diverse, offering a wide range of vehicles with varying specifications, prices, and features. This presents an opportunity to analyze car data to better understand consumer preferences, pricing trends, and the characteristics of different car models. With advancements in technology and data science, there is an increasing focus on data-driven projects that provide insights into this dynamic industry.
+
+\subsection{1.2 Motivation}
+
+As a group, our motivation for this project is to leverage data science techniques to make automotive information more accessible and valuable to consumers. By developing a Shiny app, we aim to provide an interactive platform where users can explore and compare car specifications, pricing, and other important factors. Our goal is to create a tool that simplifies the process of making informed decisions when purchasing a car and helps users understand the trends and dynamics of the Indian automotive market. This project demonstrates the power of data science in transforming how car data is analyzed, presented, and utilized by consumers and industry professionals.
+
+The Car Data Explorer is a Shiny web application that provides an interactive experience for exploring dataset of most sold cars in India with their corresponding diverse attributes.
+
+\section{2. Data Used}
+
+![An image of CarTrade website used to collect data](Website.png)
+
+The data collection process involved web scraping and organizing various car attributes from an external website, \href{https://www.cartrade.com/new-cars/best-cars-in-india/}{\textbf{CarTrade}}. The code leveraged libraries such as \texttt{rvest}, \texttt{tidyverse}, and \texttt{httr} to scrape data on car models across multiple pages and subsequently store the data in a structured format.
+
+```{=tex}
+\begin{itemize}
+    \item \textbf{Car\_data.Rdata}: Contains \textit{239 obs. of 10 variables} which include details like
+\begin{itemize}
+  \item[*] \textbf{Rank}: The rank of the car based on popularity or other criteria (numeric).
+  \item[*] \textbf{Name}: The name of the car model.
+  \item[*] \textbf{Company}: The car manufacturer or company that produces the car.
+  \item[*] \textbf{Seating\_capacity}: The number of seats available in the car.
+  \item[*] \textbf{Fuel\_type}: The type of fuel the car uses, such as Electric, Petrol, Diesel, etc.
+  \item[*] \textbf{Price}: The price range of the car in terms of currency (e.g., ₹13.50–15.50 Lakh).
+  \item[*] \textbf{No\_of\_Colours}: The number of different colors the car is available in.
+  \item[*] \textbf{No\_of\_Variants}: The number of different variants or configurations available for the car.
+  \item[*] \textbf{Cleaned\_Price}: The cleaned price of the car (likely numerical, without the range or special characters).
+  \item[*] \textbf{Price\_Category}: The price category into which the car falls, such as "10-20 Lakh."
+\end{itemize}
+    \item \textbf{Image\_Path.Rdata}: Contains the paths to saved car images
+    \item \textbf{Colour\_Data.Rdata}: Contains color options for each car
+    \item \textbf{Variants\_Data.Rdata}: Contains variants available for each car
+    \item \textbf{Images Folder}: Contains Images of each car whose path has been saved \textit{Image\_Path.Rdata}
+\end{itemize}
+```
+\section{3. Obtaining the Data}
+
+We did not use any \textit{csv} files. All the data used was scraped from \href{https://www.cartrade.com/new-cars/best-cars-in-india/}{CarTrade} website. Following details the process:
+
+```{=tex}
+\begin{enumerate}
+\item \textbf{Car Links Collection:}
+  \begin{itemize}
+    \item A loop was used to access a list of car models across multiple pages, generating links to each car’s individual webpage.
+    \item Using the \textit{read\_html} function, the code collected URLs for each car’s details page, stored them, and appended the base URL to create complete links.
+  \end{itemize}
+  
+\item \textbf{Scraping Data from Each Car Page:}
+    \begin{itemize}
+        \item For each car page, the following information was extracted:
+        \begin{itemize}
+            \item[*] Car Name
+            \item[*] Seating Capacity
+            \item[*] Fuel Type
+            \item[*] Price
+            \item[*] Color Options
+            \item[*] Variant Options
+        \end{itemize}
+        \item Prices scraped were cleaned to standardize the format, accounting for prices in units like Crores or Lakhs
+    \end{itemize}
+  
+  \item \textbf{Image Extraction:}
+  \begin{itemize}
+        \item A URL pointing to each car’s image was extracted and saved with a unique filename based on the car name and company.
+      \item Images for each car were scraped and saved locally. 
+  \end{itemize}
+  \item \textbf{Data Cleaning:}
+  \begin{itemize}
+      \item The price data was standardized to convert units into numerical values. Prices were then categorized into ranges: "0-10 Lakh," "10-20 Lakh," "20-50 Lakh," "50 Lakh - 1 Crore," and "Above 1 Crore".
+      \item Any non-standard fuel type (not petrol, diesel, or electric) was categorized as "Hybrid" for consistency
+  \end{itemize}
+\end{enumerate}
+```
+Finally the scraped data is stored \textit{.RData} blobs as mentioned before.
+
+\section{4. Features of the App}
+
+![An Image of our ShinyApp](App.png)
+
+```{=tex}
+\begin{enumerate}
+    \item \textbf{All Cars Data} 
+    Allows users to view the entire car dataset with filter options:
+    \begin{itemize}
+        \item Name: Filter by car name.
+        \item Company: Filter by car company.
+        \item Fuel Type: Filter by fuel type (Petrol, Diesel, Electric, Hybrid).
+        \item Seating Capacity: Filter by seating capacity.
+    \end{itemize}
+    Displays a car image plot and a data table of filtered results.
+
+    \item \textbf{Compare Two Cars} 
+    Provides an interface for side-by-side comparison of two selected cars. Displays:
+    \begin{itemize}
+        \item Images of both cars.
+        \item Comparison table showing attributes such as name, company, seating capacity, fuel type, price, number of colors available, and number of variants.
+    \end{itemize}
+
+    \item \textbf{Comparison of Companies} 
+    Visualizes car rankings by company and fuel type, with options to filter by:
+    \begin{itemize}
+        \item Company: Select one or multiple companies to compare.
+        \item Fuel Type: Select a fuel type to refine the comparison.
+        \item Plots:
+    \begin{itemize}
+        \item[*] Rank vs. Company: Shows car rankings for selected companies.
+        \item[*] Number of Cars by Company: Histogram showing the count of cars per company.
+    \end{itemize}
+    \end{itemize}
+    
+
+    \item \textbf{Comparison of Rank of Cars} 
+    \begin{itemize}
+        \item Visualizes car rank distributions based on fuel type and seating capacity.
+        \item Includes:
+        \begin{itemize}
+            \item[*] Rank Range Slider: Select a range of ranks to display.
+            \item[*] Fuel Type Filter: Choose a fuel type for additional filtering.
+        \end{itemize}
+        \item Plots:
+        \begin{itemize}
+            \item[*] Rank vs. Fuel Type: Shows rank distributions across fuel types.
+            \item[*] Rank vs. Seating Capacity: Shows rank distributions across seating capacities.
+        \end{itemize}
+    \end{itemize}
+\end{enumerate}
+```
+\section{5. Possible biases in Data}
+
+Potential biases in the dataset may arise from several sources:
+
+```{=tex}
+\begin{itemize}
+    \item \textbf{Brand Overrepresentation:} Certain car companies may have more models represented than others, leading to an imbalance in comparisons. This might lead to incorrect generalizations about results drawn about certain brands viz a viz others.
+    \item \textbf{Fuel Type Distribution:} If fuel type distribution is not uniform, it could lead to biased insights regarding the popularity or performance of fuel types. 
+\end{itemize}
+```
+Such biases could affect the overall analysis and might need to be accounted for when interpreting results.
+
+\section{6. Potential Insights and Questions}
+
+Building on the recent COP29 discussions, we can explore the adoption trends of electric and hybrid cars—reflecting India's progress toward clean energy—using the collected data.
+
+To evaluate India's readiness for the clean energy transition, we can analyze commitments from both Indian and foreign brands by examining their efforts to offer electric or hybrid models.
+
+Additionally, we can assess the influence of Indian players in the domestic market through app-based graphs and data, providing insights into their growing role in advancing clean energy.
+
+Hybrid vehicles are touted as an middle ground alternative, we can look into the affordability of this alternative for a common man.
+
+Finally, we can examine the impact of government interventions and subsidies on EVs to determine whether EVs are truly more cost-effective for consumers compared to petrol or diesel vehicles.
+
+\section{7. Key Visualizations for Data Insights}
+
+Below drawn plot shows the popularity rank of cars by company, filtered to only show top 100 most popular cars and corresponding brands. The graph clearly indicates that \textbf{petrol-powered cars lead the popular Indian market}, with diesel-powered cars following. Moreover as seen from the graph, \textbf{the top 100 best-selling cars are predominantly from Indian brands}, including Maruti, Tata, and Mahindra.
+
+```{r, echo=FALSE, warning=FALSE}
+# Load required data
+load("Car_data.Rdata")
+load("Image_Path.Rdata")
+
+car_data <- merge(Car_data, Image_data, by = "Name", all = TRUE)
+
+library(ggplot2)
+
+# Filter data to only include ranks between 0 and 100
+filtered_data <- car_data
+filtered_data$Fuel_type <- ifelse(filtered_data$Fuel_type %in% c("Petrol", "Diesel", "Electric"), filtered_data$Fuel_type, "Hybrid")
+filtered_data <- subset(filtered_data, Rank >= 0 & Rank <= 100)
+
+# Create a static ggplot2 plot
+p <- ggplot(filtered_data, aes(
+  x = Company, 
+  y = Rank, 
+  color = Fuel_type
+)) +
+  geom_point(size = 1, alpha = 0.7) +
+  scale_y_reverse() +
+  theme_minimal() +
+  labs(title = "Rank of Cars vs Company", x = "Company", y = "Rank") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Display the plot in PDF
+print(p)
+```
+
+The graph shows the relationship between car rank and price range, categorized by fuel type. From the plot, it is evident that petrol-run cars dominate the lower price segments, particularly in the range from 0 to 20 Lakh. Even with the government incentives aimed at promoting greener technologies, \textbf{petrol-powered cars still represent the majority of the more affordable options}.
+
+This trend is particularly notable in the \textbf{"0-10 Lakh" price range, where petrol cars outnumber other fuel types by a significant margin}. Electric and hybrid vehicles, although gaining popularity, remain less prevalent in these lower price ranges, which may be attributed to higher initial costs despite the incentives.
+
+The presence of diesel cars in the mid-price ranges (20-50 Lakh) suggests that consumers are still choosing fuel-efficient options within this category, particularly where price sensitivity is less of an issue. The electric cars and hybrid cars, represented by green and blue points, show a scattering of models across various price ranges, with a concentration in the higher price categories, reflecting a growing interest in eco-friendly options but at a higher price point.
+
+```{r, echo=FALSE, warning=FALSE}
+library(ggplot2)
+options(repr.plot.width = 1, repr.plot.height = 1)
+
+# Assuming `filtered_data` is already filtered for `Fuel_type` and `Rank` as needed
+p <- ggplot(filtered_data, aes(x = Rank, y = Price_Category, color = Fuel_type)) +
+  geom_point() +
+  labs(title = "Rank vs Price Range", x = "Rank", y = "Price Range") +
+  theme_minimal()
+
+# Display the plot
+print(p)
+```
+
+If we chart the prices of hybrid options available in the Indian market, it becomes clear that most fall within a higher price range (with a few exceptions), indicating that this technology is not yet affordable on a large scale.
+
+```{r, echo=FALSE, warning=FALSE}
+library(ggplot2)
+options(repr.plot.width = 1, repr.plot.height = 1)
+
+# Assuming `filtered_data` is already filtered for `Fuel_type` and `Rank` as needed
+selected_fuel_type <- "Hybrid"
+filtered_dt <- car_data[car_data$Fuel_type == selected_fuel_type, ]
+
+p <- ggplot(filtered_dt, aes(x = Rank, y = Price_Category, color = Fuel_type)) +
+  geom_point() +
+  labs(title = "Rank vs Price Range", x = "Rank", y = "Price Range") +
+  theme_minimal()
+
+# Display the plot
+print(p)
+```
+
+Furthermore, if we plot histogram of electric vehicles availaible three most popular (which we could infer from previous plots) Indian car brands i.e. Mahindra, Tata and Maruti. We see that there are much less electric vehicle options available, with Maruti having none at all!
+
+```{r, echo=FALSE, warning=FALSE}
+library(ggplot2)
+
+selected_companies <- c("Mahindra", "Tata", "Maruti")  # Replace with your selected companies
+selected_fuel_type <- "Electric"  # Replace with your desired fuel type
+
+# Filter the data for selected companies and fuel type
+filtered_data <- car_data[car_data$Company %in% selected_companies & car_data$Fuel_type == selected_fuel_type, ]
+
+carCounts <- table(filtered_data$Company)
+carCountsDF <- as.data.frame(carCounts)
+colnames(carCountsDF) <- c("Company", "Count")
+carCountsDF$Company <- reorder(carCountsDF$Company, -carCountsDF$Count)
+
+p <- ggplot(carCountsDF, aes(x = Company, y = Count, fill = Company)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Number of Cars by Company", x = "Company", y = "Number of Cars") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Display the plot
+print(p)
+
+```
+
+The previous inference of \textbf{Indian brands having smaller selection of electric cars} can be contrasted with the abundant availability of electric options by foreign players from the following histogram.
+
+```{r, echo=FALSE, warning=FALSE, fig.height=3.8, fig.width=8}
+library(ggplot2)
+
+selected_fuel_type <- "Electric"  # Replace with your desired fuel type
+
+# Filter the data for fuel type
+filtered_data <- car_data[car_data$Fuel_type == selected_fuel_type, ]
+
+carCounts <- table(filtered_data$Company)
+carCountsDF <- as.data.frame(carCounts)
+colnames(carCountsDF) <- c("Company", "Count")
+carCountsDF$Company <- reorder(carCountsDF$Company, -carCountsDF$Count)
+
+p <- ggplot(carCountsDF, aes(x = Company, y = Count, fill = Company)) +
+  geom_bar(stat = "identity") +
+  theme_minimal() +
+  labs(title = "Number of Cars by Company", x = "Company", y = "Number of Cars") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Display the plot
+print(p)
+
+```
+
+Consolidating all the inferences drawn from the graph, we can say:
+
+```{=tex}
+\begin{enumerate}
+\item Petrol-powered cars lead the popular Indian market, and constitute the majority of the cheaper options even after govt. incentives.
+\item Indian brands having smaller selection of electric cars
+\end{enumerate}
+```
+This suggests there is less preparedness for greener transition among Indian players. This can be attributed to ineffective policy measures and lack of commitment by Indian firms.
+
+\section{8. Final Conclusions}
+
+We created Car Data Explorer, an interactive Shiny web application that allows users to explore a dataset of cars with various attributes, including name, company, seating capacity, fuel type, price, and rank. The app includes features to filter, compare, and visualize insights into car rankings and company distributions.
+
+Furthermore, using the app's graphs and the dataset collected, we were able to draw inference regarding the clean future of Indian roads.
+
+```{=tex}
+\section{References}
+\begin{itemize}
+\item \href{https://www.cartrade.com/api/filterpage/models?}{CarTrade}
+ website
+\item \href{https://ggplot2.tidyverse.org/articles/ggplot2.html}{ggplot2} documentation
+\item \href{https://docs.posit.co/shinyapps.io/guide/index.html}{ShinyApp} documentation
+\end{itemize}
+```
