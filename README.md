@@ -1,4 +1,3 @@
-# Project Repository
+This is a group course [MTH208 (Data Science Lab 1)]  project, mentored by Dr. Dootika Vats.
 
-This repository will contain **ALL** the code, analysis, document and presentation for group 20's project.
- 
+## The link to the working app: "https://arunansh.shinyapps.io/appshiny-1/"
